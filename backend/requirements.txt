@@ -1,0 +1,6 @@
+# Requirements for Case Co-Pilot Backend API
+fastapi
+uvicorn
+pydantic
+python-dotenv
+crewai
