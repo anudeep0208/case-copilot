@@ -14,7 +14,7 @@
         <header class="box header">
             <h1>Case Co-Pilot: AI Test Case Generator for Rally</h1>
         </header>
-
+        <div id="statusMessage" class="status-msg"></div>
         <div class="input-row">
             <div class="input-group">
                 <label for="storyID">User Story ID <span style="color: red;">*</span></label>
@@ -41,19 +41,21 @@
             placeholder="Enter Acceptance Criteria here..."></textarea>
 
         <div class="button-container">
-            <button id="resetBtn" class="secondary-button" onclick="resetPage()">Reset Page</button>
-            <button id="generateBtn" onclick="generateTestCases()">Generate Testcases</button>
-            <div id="loader" class="hidden">🤖 AI Agents are working...</div>
+            <button id="resetBtn" class="secondary-button">Reset Page</button>
+            <button id="generateBtn">Generate Testcases</button>
+        </div>
+
+        <div id="loader" class="box output-area hidden">
+            <span style="font-size: 20px;">⚙️</span> AI Agents are processing your criteria... Please wait.
         </div>
 
         <div id="downloadSection" class="box download-box hidden">
             <p>Test cases generated successfully! Download your CSV below.</p>
 
-            <a id="downloadLink" href="#" class="download-button" onclick="handleDownload()">
-                📄 Download CSV File
-            </a>
+            <a id="downloadLink" href="#" class="download-button"> Download CSV File</a>
 
-            <p class="small-text">After download, the page will reset.</p>
+            <p class="small-text">Note: The input data will remain on the page after download. Use 'Reset Page' to clear
+                inputs.</p>
         </div>
     </div>
 

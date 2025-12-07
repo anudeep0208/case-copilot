@@ -1,48 +1,57 @@
+// CONFIGURATION
+const API_URL = 'http://127.0.0.1:8000/generate';
+
+// DOM ELEMENTS
+const generateBtn = document.getElementById('generateBtn');
+const resetBtn = document.getElementById('resetBtn');
+const downloadLink = document.getElementById('downloadLink');
+const statusMsg = document.getElementById('statusMessage');
+
+// EVENT LISTENERS (Better for maintainability)
+document.addEventListener('DOMContentLoaded', () => {
+    generateBtn.addEventListener('click', generateTestCases);
+    resetBtn.addEventListener('click', resetPage);
+    downloadLink.addEventListener('click', () => {
+        showStatus("Test cases downloaded successfully!", "success");
+        // We DO NOT reload the page here. Let the user keep their data.
+    });
+});
+
+// UTILITY: Show User Feedback
+function showStatus(message, type) {
+    statusMsg.textContent = message;
+    statusMsg.className = 'status-msg'; // Reset class
+    if (type === 'error') statusMsg.classList.add('status-error');
+    if (type === 'success') statusMsg.classList.add('status-success');
+}
+
 async function generateTestCases() {
-    const storyID = document.getElementById('storyID').value;
-    const email = document.getElementById('userEmail').value;
+    const storyID = document.getElementById('storyID').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
     const testType = document.getElementById('testType').value;
-    const criteria = document.getElementById('acceptanceCriteria').value;
+    const criteria = document.getElementById('acceptanceCriteria').value.trim();
     const loader = document.getElementById('loader');
     const downloadSection = document.getElementById('downloadSection');
 
-    // Basic Validation
-    // Validation: User Story ID (Required, 12 Alphanumeric)
-    if (!storyID) {
-        alert("User Story ID is required.");
-        return;
-    }
-    const storyIdRegex = /^[a-zA-Z0-9]{1,12}$/;
-    if (!storyIdRegex.test(storyID)) {
-        alert("User Story ID should be alphanumeric characters.");
-        return;
-    }
+    // CLEAR PREVIOUS STATUS
+    statusMsg.className = 'status-msg';
 
-    // Validation: User Email (Optional, Format)
-    if (email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            alert("Please enter a valid email address.");
-            return;
-        }
-    }
+    // VALIDATION
+    if (!storyID) return showStatus("User Story ID is required.", "error");
+    if (!/^[a-zA-Z0-9]{1,12}$/.test(storyID)) return showStatus("Invalid Story ID format.", "error");
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showStatus("Invalid email address.", "error");
+    if (!criteria) return showStatus("Acceptance Criteria is required.", "error");
 
-    // Validation: Acceptance Criteria (Required)
-    if (!criteria) {
-        alert("Acceptance Criteria is required.");
-        return;
-    }
-
-    // Default Test Type to "Functional" if empty
     const finalTestType = testType || "Functional";
 
-    // Show Loader
+    // UI STATE: LOADING
     loader.classList.remove('hidden');
     downloadSection.classList.add('hidden');
+    generateBtn.disabled = true; // Prevent double clicks
+    generateBtn.style.opacity = "0.7";
 
     try {
-        // Call Python Backend
-        const response = await fetch('[http://127.0.0.1:8000/generate](http://127.0.0.1:8000/generate)', {
+        const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -53,49 +62,42 @@ async function generateTestCases() {
             })
         });
 
+        // Check if server actually responded nicely
+        if (!response.ok) {
+            throw new Error(`Server Error: ${response.status}`);
+        }
+
         const data = await response.json();
 
         if (data.status === "success") {
-            // Prepare CSV for download
+            // Prepare CSV
             const blob = new Blob([data.csv_data], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
-            const downloadLink = document.getElementById('downloadLink');
 
             downloadLink.href = url;
             downloadLink.download = `${storyID}_TestCases.csv`;
 
-            // Show Download Section
             downloadSection.classList.remove('hidden');
+            showStatus("Generation Complete! Ready to download.", "success");
         } else {
-            alert("Error generating tests.");
+            showStatus("The agent encountered an issue generating tests.", "error");
         }
     } catch (error) {
         console.error("Error:", error);
-        alert("Failed to connect to the backend.");
+        showStatus("Failed to connect to the AI Agent. Check backend.", "error");
     } finally {
+        // UI STATE: RESET
         loader.classList.add('hidden');
+        generateBtn.disabled = false;
+        generateBtn.style.opacity = "1";
     }
 }
 
-function handleDownload() {
-    // Wait a brief moment to ensure download starts, then reset
-    setTimeout(() => {
-        alert("Success! Your test cases have been downloaded.");
-        // Reset the page
-        location.reload();
-    }, 1000);
-}
-
 function resetPage() {
-    // Clear inputs
     document.getElementById('storyID').value = '';
     document.getElementById('userEmail').value = '';
     document.getElementById('acceptanceCriteria').value = '';
-
-    // Reset dropdown to first option
     document.getElementById('testType').selectedIndex = 0;
-
-    // Hide download section and loader
     document.getElementById('downloadSection').classList.add('hidden');
-    document.getElementById('loader').classList.add('hidden');
+    statusMsg.className = 'status-msg'; // Hide status
 }

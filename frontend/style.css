@@ -1,3 +1,32 @@
+/* GLOBAL RESET for Robust Layouts */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Add a status message class */
+.status-msg {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: none;
+    /* Hidden by default */
+}
+
+.status-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    display: block;
+}
+
+.status-success {
+    background-color: #d4edda;
+    color: #155724;
+    display: block;
+}
+
 body {
     font-family: 'Segoe UI', sans-serif;
     background-color: #f4f4f9;
@@ -137,4 +166,44 @@ button:active {
     text-decoration: none;
     border-radius: 5px;
     font-weight: bold;
+}
+
+/* Styling for the new Loader Area */
+.output-area {
+    /* Mimics the old wireframe box style for clarity */
+    border: 1px solid #007bff;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #007bff;
+    background-color: #e6f0ff;
+}
+
+.output-area span {
+    /* For the spinning gear icon */
+    display: inline-block;
+    animation: spin 2s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Ensure download box looks distinct */
+.download-box {
+    margin-top: 20px;
+    border: 1px solid #28a745;
+    /* Green border for success */
+    padding: 15px;
+    text-align: center;
 }
