@@ -1,64 +1,110 @@
 # backend/main.py
 
+"""
+Main API service for Case Co-Pilot.
+Provides an endpoint to generate test cases (currently backed by a mock generator).
+This file handles inbound request validation, CORS configuration, and returns CSV data to the frontend.
+"""
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-# --- NEW IMPORT ---
-from mock_generator import mock_test_case_generator
+from mock_generator import mock_test_case_generator  # Mock function import (temporary placeholder for real agents)
+from typing import Optional
+import logging
 
-# ------------------
 
-app = FastAPI(title="Case Co-Pilot API", version="1.0.0")
+# ----------------------------------------
+# FastAPI Application Initialization
+# ----------------------------------------
+app = FastAPI(
+    title="Case Co-Pilot API",
+    version="1.0.0",
+    description="Backend API to generate Rally-compatible Test Cases from Acceptance Criteria."
+)
 
-# --- CORS Configuration ---
+# Enable logging for debugging and production monitoring
+logging.basicConfig(level=logging.INFO)
+
+
+# ----------------------------------------
+# CORS Configuration
+# Allows frontend JavaScript to communicate with backend API without blocking
+# ----------------------------------------
 origins = [
-    "http://127.0.0.1:5500",
+    "http://127.0.0.1:5500",   # Local frontend served via Live Server
     "http://localhost:5500",
+    "http://127.0.0.1:63342",  # PyCharm hosted frontend
+    "http://localhost:63342",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins,     # Allowed domains
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],       # Allow GET, POST, DELETE, PUT, etc.
+    allow_headers=["*"],       # Allow all headers including JSON content type
 )
 
 
-# --- Request Body Schema (Same) ---
+# ----------------------------------------
+# Request Body Schema (Pydantic Model)
+# Defines expected structure of API POST request from frontend
+# Fields are optional because frontend may not send all values
+# ----------------------------------------
 class StoryRequest(BaseModel):
-    story_id: str
-    criteria: str
-    test_type: str = "Functional"
-    email: str = ""
+    story_id: Optional[str] = ""
+    criteria: Optional[str] = ""
+    test_type: Optional[str] = "Functional"
+    email: Optional[str] = ""
 
 
-# --- API Endpoint Definition ---
+# ----------------------------------------
+# POST /generate API Endpoint
+# Purpose: Accept user input and return generated test cases as CSV string
+# Uses a mock generator now; will later integrate CrewAI / LLM logic
+# ----------------------------------------
 @app.post("/generate")
 async def generate_tests(request: StoryRequest):
     """
-    Handles the test case generation request using the temporary mock function.
+    Generates Rally Test Cases based on provided Story ID, Criteria, and Test Type.
+    Currently, returns simulated results using mock_generator.py.
     """
-    print(f"Received request for {request.story_id}. Type: {request.test_type}. Owner: {request.email}")
+
+    # Sanitize / normalize values to avoid 'None' in output
+    story_id = str(request.story_id or "")
+    criteria = str(request.criteria or "")
+    test_type = str(request.test_type or "Functional")
+    email = str(request.email or "")
+
+    # Log data to backend console for visibility and debugging
+    logging.info(f"Request received -> StoryID={story_id}, Type={test_type}, Owner={email}")
 
     try:
-        # Call the MOCK FUNCTION imported from mock_generator.py
+        # Call mock generator (later replace with real multi-agent AI flow)
         csv_content = mock_test_case_generator(
-            request.story_id,
-            request.criteria,
-            request.test_type,
-            request.email
+            story_id,
+            criteria,
+            test_type,
+            email
         )
 
-        # Return the raw CSV string in the required 'csv_data' key
-        return {"status": "success", "csv_data": csv_content}
+        # Return response in JSON format expected by frontend
+        return {
+            "status": "success",
+            "csv_data": csv_content
+        }
 
     except Exception as e:
-        print(f"An error occurred: {e}")
-        # Ensure error handling returns a 500 status
+        # Log issue, return structured error response to frontend
+        logging.error(f"Error occurred: {e}")
         raise HTTPException(
             status_code=500,
-            detail=f"Internal Server Error: {e}"
+            detail=str(e)
         )
 
-# To run this file: uvicorn main:app --reload
+
+# ----------------------------------------
+# RUN COMMAND (for manual startup via terminal)
+# ----------------------------------------
+# uvicorn main:app --reload
