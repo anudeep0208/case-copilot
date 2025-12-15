@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "case-copilot"
+version = "0.1.0"
+description = "Backend API for generating Rally-compatible test cases"
+authors = ["Anudeep <anudeepkesanakurthi@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "backend" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+# --- Backend framework ---
+fastapi = "^0.110.0"
+uvicorn = { extras = ["standard"], version = "^0.29.0" }
+requests = "^2.32.5"
+
+# --- Data validation ---
+pydantic = "^2.6.0"
+
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

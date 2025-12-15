@@ -1,0 +1,209 @@
+/* GLOBAL RESET for Robust Layouts */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Add a status message class */
+.status-msg {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: none;
+    /* Hidden by default */
+}
+
+.status-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    display: block;
+}
+
+.status-success {
+    background-color: #d4edda;
+    color: #155724;
+    display: block;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.box {
+    /* Resetting generic box styles */
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.input-box,
+.text-area {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    background: #fff;
+}
+
+.input-box {
+    height: 42px;
+}
+
+.text-area {
+    height: 150px;
+    resize: vertical;
+    font-family: inherit;
+    margin-bottom: 20px;
+}
+
+.input-box:focus,
+.text-area:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+
+
+.secondary-button {
+    background: #6c757d;
+    margin-right: auto;
+}
+
+.secondary-button:hover {
+    background: #5a6268;
+}
+
+.hidden {
+    display: none;
+}
+
+.download-button {
+    display: inline-block;
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Styling for the new Loader Area */
+.output-area {
+    /* Mimics the old wireframe box style for clarity */
+    border: 1px solid #007bff;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #007bff;
+    background-color: #e6f0ff;
+}
+
+.output-area span {
+    /* For the spinning gear icon */
+    display: inline-block;
+    animation: spin 2s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Ensure download box looks distinct */
+.download-box {
+    margin-top: 20px;
+    border: 1px solid #28a745;
+    /* Green border for success */
+    padding: 15px;
+    text-align: center;
+}
