@@ -2,7 +2,7 @@
 
 """
 Main API service for Case Co-Pilot.
-Provides an endpoint to generate test cases (currently backed by a mock generator).
+Provides an endpoint to generate test cases (mock or LLM-backed based on configuration).
 This file handles inbound request validation, CORS configuration, and returns CSV data to the frontend.
 """
 
@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.mock_generator import mock_test_case_generator
 from typing import Optional
 import logging
+import os
 
 
 # ----------------------------------------
@@ -64,6 +65,8 @@ class StoryRequest(BaseModel):
 # Purpose: Accept user input and return generated test cases as CSV string
 # Uses a mock generator now; will later integrate CrewAI / LLM logic
 # ----------------------------------------
+
+USE_MOCK = os.getenv("USE_MOCK_LLM").lower() == "true"
 @app.post("/generate")
 async def generate_tests(request: StoryRequest):
     """
@@ -82,18 +85,24 @@ async def generate_tests(request: StoryRequest):
 
     try:
         # Call mock generator (later replace with real multi-agent AI flow)
-        csv_content = mock_test_case_generator(
-            story_id,
-            criteria,
-            test_type,
-            email
-        )
-
-        # Return response in JSON format expected by frontend
-        return {
-            "status": "success",
-            "csv_data": csv_content
-        }
+        if USE_MOCK:
+            csv_content = mock_test_case_generator(
+                story_id,
+                criteria,
+                test_type,
+                email
+            )
+            # Return response in JSON format expected by frontend
+            return {
+                "status": "success",
+                "csv_data": csv_content
+            }
+        else:
+            #call real agent here
+            return {
+                "status": "not_implemented",
+                "message": "Real LLM-based generation not wired yet."
+            }
 
     except Exception as e:
         # Log issue, return structured error response to frontend
