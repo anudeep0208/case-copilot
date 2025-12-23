@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from backend.services.mock_service import generate_mock_testcases
 from backend.services.ai_service import generate_testcases
+from dotenv import load_dotenv
 from typing import Optional
 import logging
 import os
@@ -67,7 +68,7 @@ class StoryRequest(BaseModel):
 # Purpose: Accept user input and return generated test cases as CSV string
 # Uses a mock generator now; will later integrate CrewAI / LLM logic
 # ----------------------------------------
-
+load_dotenv()
 USE_MOCK = os.getenv("USE_MOCK_LLM").lower() == "true"
 @app.post("/generate")
 async def generate_tests(request: StoryRequest):
