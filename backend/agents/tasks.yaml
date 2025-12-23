@@ -1,42 +1,41 @@
-tasks:
-  clean_acceptance_criteria:
-    description: >
-      Clean and normalize the following raw acceptance criteria text received
-      from the backend: {{acceptance_criteria}} by removing URLs, image blobs, and
-      unrelated noise while preserving original meaning and structure.
-    expected_output: >
-      Clean, readable acceptance criteria text with no unwanted
-      artifacts and no changes to intent or formatting.
-    agent: input_parser
+clean_acceptance_criteria:
+  description: >
+    Clean and normalize the following raw acceptance criteria text received
+    from the backend: {{acceptance_criteria}} by removing URLs, image blobs, and
+    unrelated noise while preserving original meaning and structure.
+  expected_output: >
+    Clean, readable acceptance criteria text with no unwanted
+    artifacts and no changes to intent or formatting.
+  agent: input_parser
 
-  generate_test_cases:
-    description: >
-      Generate comprehensive functional test cases from the
-      cleaned acceptance criteria, covering all relevant
-      end-user scenarios.
-    expected_output: >
-      A CSV-formatted string. Each field MUST be enclosed in double quotes 
-      (e.g., "Field Value") to handle internal commas. 
-      Columns: Name, Description, Action/Step, Expected Outcome.
-    agent: testcase_creator
+generate_test_cases:
+  description: >
+    Generate comprehensive functional test cases from the
+    cleaned acceptance criteria, covering all relevant
+    end-user scenarios.
+  expected_output: >
+    A CSV-formatted string. Each field MUST be enclosed in double quotes 
+    (e.g., "Field Value") to handle internal commas. 
+    Columns: Name, Description, Action/Step, Expected Outcome.
+  agent: testcase_creator
 
-  review_test_cases:
-    description: >
-      Review the generated CSV test cases to ensure correctness,
-      completeness, and alignment with the original cleaned acceptance criteria.
-      Remove duplicates and ensure structural integrity.
-    expected_output: >
-      Reviewed and corrected CSV test cases with no duplicates
-      and accurate information. All fields must remain 
-      wrapped in double quotes.
-    agent: reviewer
+review_test_cases:
+  description: >
+    Review the generated CSV test cases to ensure correctness,
+    completeness, and alignment with the original cleaned acceptance criteria.
+    Remove duplicates and ensure structural integrity.
+  expected_output: >
+    Reviewed and corrected CSV test cases with no duplicates
+    and accurate information. All fields must remain 
+    wrapped in double quotes.
+  agent: reviewer
 
-  validate_csv_output:
-    description: >
-      Validate the reviewed test cases to ensure they are in
-      a proper, usable CSV format. Check for consistent column counts 
-      and proper use of double-quote delimiters.
-    expected_output: >
-      Valid CSV output ready for export. If the format is unfixable, 
-      provide a clear error message.
-    agent: formatter
+validate_csv_output:
+  description: >
+    Validate the reviewed test cases to ensure they are in
+    a proper, usable CSV format. Check for consistent column counts 
+    and proper use of double-quote delimiters.
+  expected_output: >
+    Valid CSV output ready for export. If the format is unfixable, 
+    provide a clear error message.
+  agent: formatter
