@@ -20,9 +20,10 @@ def run_testcase_agent(story_id: str, criteria: str, test_type: str) -> str:
     # Return the raw string output from the Crew
     #return result.raw if hasattr(result, 'raw') else str(result)
     print("DEBUG RESULT TYPE:", type(result))
-    print("DEBUG RESULT:", result)
+    print("DEBUG RESULT:", result.raw)
 
-    return str(result)
+    #return str(result)
+    return result.raw
 
 
 if __name__ == "__main__":
