@@ -9,10 +9,12 @@ This file handles inbound request validation, CORS configuration, and returns CS
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from backend.mock_generator import mock_test_case_generator
+from backend.services.mock_service import generate_mock_testcases
+from backend.services.ai_service import generate_testcases
 from typing import Optional
 import logging
 import os
+
 
 
 # ----------------------------------------
@@ -86,7 +88,7 @@ async def generate_tests(request: StoryRequest):
     try:
         # Call mock generator (later replace with real multi-agent AI flow)
         if USE_MOCK:
-            csv_content = mock_test_case_generator(
+            csv_content = generate_mock_testcases(
                 story_id,
                 criteria,
                 test_type,
@@ -99,9 +101,16 @@ async def generate_tests(request: StoryRequest):
             }
         else:
             #call real agent here
+            csv_content = generate_testcases(
+                story_id,
+                criteria,
+                test_type,
+                email
+            )
+            # Return response in JSON format expected by frontend
             return {
-                "status": "not_implemented",
-                "message": "Real LLM-based generation not wired yet."
+                "status": "success",
+                "csv_data": csv_content
             }
 
     except Exception as e:
